@@ -15,17 +15,51 @@
             display: block;
             background-color: #f0f8ff;
         }
-        #score {
+        #score, #lives, #level {
             position: absolute;
             top: 10px;
-            left: 10px;
             font-size: 24px;
             color: #ff1493;
+        }
+        #score {
+            left: 10px;
+        }
+        #lives {
+            left: 150px;
+        }
+        #level {
+            left: 300px;
+        }
+        #startButton {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px 40px;
+            font-size: 24px;
+            background-color: #ff1493;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        #gameOverMessage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 36px;
+            color: #ff1493;
+            display: none;
         }
     </style>
 </head>
 <body>
     <div id="score">Score: 0</div>
+    <div id="lives">Lives: 3</div>
+    <div id="level">Level: 1</div>
+    <button id="startButton">Start Game</button>
+    <div id="gameOverMessage">Game Over! Click to Restart</div>
     <canvas id="gameCanvas"></canvas>
     <script>
         const canvas = document.getElementById('gameCanvas');
@@ -34,7 +68,10 @@
         canvas.height = window.innerHeight;
 
         let score = 0;
-        document.getElementById('score').innerText = `Score: ${score}`;
+        let lives = 3;
+        let level = 1;
+        let heartSpeed = 2;
+        let gameRunning = false;
 
         const character = {
             x: canvas.width / 2 - 25,
@@ -45,8 +82,10 @@
         };
 
         const hearts = [];
-        const heartSize = 15; // Adjusted heart size
-        const heartSpeed = 2;
+        const heartSize = 15;
+
+        const collectSound = new Audio('https://www.soundjay.com/button/sounds/button-3.mp3');
+        const gameOverSound = new Audio('https://www.soundjay.com/button/sounds/button-10.mp3');
 
         function drawCharacter() {
             ctx.fillStyle = '#ff1493';
@@ -54,17 +93,24 @@
         }
 
         function drawHeart(heart) {
+            const x = heart.x;
+            const y = heart.y;
+            const size = heartSize / 2;
+
             ctx.beginPath();
-            ctx.moveTo(heart.x + heartSize / 2, heart.y + heartSize / 4);
-            ctx.arc(heart.x + heartSize / 2, heart.y + heartSize / 2, heartSize / 2, 0, Math.PI * 2, true); // Changed angle to draw full circle
-            ctx.arc(heart.x + 4 * heartSize / 2, heart.y + heartSize / 2, heartSize / 2, 0, Math.PI * 2, true); // Changed angle to draw full circle
-            ctx.lineTo(heart.x + heartSize / 2, heart.y + heartSize);
-            ctx.closePath();
+            ctx.moveTo(x, y + size);
+            ctx.bezierCurveTo(x, y, x - size, y, x - size, y + size);
+            ctx.bezierCurveTo(x - size, y + (size * 2), x, y + (size * 3), x, y + (size * 4));
+            ctx.bezierCurveTo(x, y + (size * 3), x + size, y + (size * 2), x + size, y + size);
+            ctx.bezierCurveTo(x + size, y, x, y, x, y + size);
             ctx.fillStyle = '#ff1493';
             ctx.fill();
+            ctx.closePath();
         }
 
         function update() {
+            if (!gameRunning) return;
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawCharacter();
 
@@ -85,16 +131,51 @@
                 ) {
                     hearts.splice(i, 1);
                     score++;
+                    collectSound.play();
                     document.getElementById('score').innerText = `Score: ${score}`;
+                    if (score % 10 === 0) {
+                        level++;
+                        heartSpeed += 0.5;
+                        document.getElementById('level').innerText = `Level: ${level}`;
+                    }
                 } else if (hearts[i].y > canvas.height) {
                     hearts.splice(i, 1);
+                    lives--;
+                    document.getElementById('lives').innerText = `Lives: ${lives}`;
+                    if (lives === 0) {
+                        gameOver();
+                    }
                 }
             }
 
             requestAnimationFrame(update);
         }
 
+        function gameOver() {
+            gameRunning = false;
+            gameOverSound.play();
+            document.getElementById('gameOverMessage').style.display = 'block';
+            document.getElementById('gameOverMessage').onclick = startGame;
+        }
+
+        function startGame() {
+            score = 0;
+            lives = 3;
+            level = 1;
+            heartSpeed = 2;
+            gameRunning = true;
+            hearts.length = 0;
+            character.x = canvas.width / 2 - 25;
+            document.getElementById('score').innerText = `Score: ${score}`;
+            document.getElementById('lives').innerText = `Lives: ${lives}`;
+            document.getElementById('level').innerText = `Level: ${level}`;
+            document.getElementById('gameOverMessage').style.display = 'none';
+            document.getElementById('startButton').style.display = 'none';
+            update();
+        }
+
         function moveCharacter(event) {
+            if (!gameRunning) return;
             switch (event.key) {
                 case 'ArrowLeft':
                     character.x = Math.max(0, character.x - character.speed);
@@ -105,8 +186,8 @@
             }
         }
 
+        document.getElementById('startButton').onclick = startGame;
         window.addEventListener('keydown', moveCharacter);
-        update();
     </script>
 </body>
 </html>
