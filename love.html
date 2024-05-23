@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Catch the Hearts</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+      }
+      canvas {
+        display: block;
+        background-color: #f0f8ff;
+      }
+      #score {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        font-size: 24px;
+        color: #ff1493;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="score">Score: 0</div>
+    <canvas id="gameCanvas"></canvas>
+    <script>
+      const canvas = document.getElementById("gameCanvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      let score = 0;
+      document.getElementById("score").innerText = `Score: ${score}`;
+
+      const character = {
+        x: canvas.width / 2 - 25,
+        y: canvas.height - 60,
+        width: 50,
+        height: 50,
+        speed: 10,
+      };
+
+      const hearts = [];
+      const heartSize = 30;
+      const heartSpeed = 2;
+
+      function drawCharacter() {
+        ctx.fillStyle = "#ff1493";
+        ctx.fillRect(
+          character.x,
+          character.y,
+          character.width,
+          character.height
+        );
+      }
+
+      function drawHeart(heart) {
+        ctx.beginPath();
+        ctx.moveTo(heart.x + heartSize / 2, heart.y + heartSize / 4);
+        ctx.arc(
+          heart.x + heartSize / 4,
+          heart.y + heartSize / 4,
+          heartSize / 4,
+          0,
+          Math.PI,
+          true
+        );
+        ctx.arc(
+          heart.x + (3 * heartSize) / 4,
+          heart.y + heartSize / 4,
+          heartSize / 4,
+          0,
+          Math.PI,
+          true
+        );
+        ctx.lineTo(heart.x + heartSize / 2, heart.y + heartSize);
+        ctx.closePath();
+        ctx.fillStyle = "#ff1493";
+        ctx.fill();
+      }
+
+      function update() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawCharacter();
+
+        if (Math.random() < 0.02) {
+          const heartX = Math.random() * (canvas.width - heartSize);
+          hearts.push({ x: heartX, y: 0 });
+        }
+
+        for (let i = 0; i < hearts.length; i++) {
+          hearts[i].y += heartSpeed;
+          drawHeart(hearts[i]);
+
+          if (
+            hearts[i].x < character.x + character.width &&
+            hearts[i].x + heartSize > character.x &&
+            hearts[i].y < character.y + character.height &&
+            hearts[i].y + heartSize > character.y
+          ) {
+            hearts.splice(i, 1);
+            score++;
+            document.getElementById("score").innerText = `Score: ${score}`;
+          } else if (hearts[i].y > canvas.height) {
+            hearts.splice(i, 1);
+          }
+        }
+
+        requestAnimationFrame(update);
+      }
+
+      function moveCharacter(event) {
+        switch (event.key) {
+          case "ArrowLeft":
+            character.x = Math.max(0, character.x - character.speed);
+            break;
+          case "ArrowRight":
+            character.x = Math.min(
+              canvas.width - character.width,
+              character.x + character.speed
+            );
+            break;
+        }
+      }
+
+      window.addEventListener("keydown", moveCharacter);
+      update();
+    </script>
+  </body>
+</html>
