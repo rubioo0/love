@@ -87,6 +87,11 @@
         const collectSound = new Audio('https://www.soundjay.com/button/sounds/button-3.mp3');
         const gameOverSound = new Audio('https://www.soundjay.com/button/sounds/button-10.mp3');
 
+        function playSound(sound) {
+            sound.currentTime = 0;
+            sound.play().catch(error => console.error('Audio play error:', error));
+        }
+
         function drawCharacter() {
             ctx.fillStyle = '#ff1493';
             ctx.fillRect(character.x, character.y, character.width, character.height);
@@ -131,7 +136,7 @@
                 ) {
                     hearts.splice(i, 1);
                     score++;
-                    collectSound.play().catch(error => console.error('Audio play error:', error));
+                    playSound(collectSound);
                     document.getElementById('score').innerText = `Score: ${score}`;
                     if (score % 10 === 0) {
                         level++;
@@ -153,7 +158,7 @@
 
         function gameOver() {
             gameRunning = false;
-            gameOverSound.play().catch(error => console.error('Audio play error:', error));
+            playSound(gameOverSound);
             document.getElementById('gameOverMessage').style.display = 'block';
             document.getElementById('gameOverMessage').onclick = startGame;
         }
@@ -187,8 +192,8 @@
         }
 
         document.getElementById('startButton').onclick = () => {
-            collectSound.play().catch(error => console.error('Audio play error:', error));
-            gameOverSound.play().catch(error => console.error('Audio play error:', error));
+            playSound(collectSound);
+            playSound(gameOverSound);
             startGame();
         };
 
