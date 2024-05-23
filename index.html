@@ -45,7 +45,7 @@
         };
 
         const hearts = [];
-        const heartSize = 15;
+        const heartSize = 15; // Adjusted heart size
         const heartSpeed = 2;
 
         function drawCharacter() {
@@ -54,19 +54,14 @@
         }
 
         function drawHeart(heart) {
-            const x = heart.x;
-            const y = heart.y;
-            const size = heartSize / 2;
-
             ctx.beginPath();
-            ctx.moveTo(x, y + size);
-            ctx.bezierCurveTo(x, y, x - size, y, x - size, y + size);
-            ctx.bezierCurveTo(x - size, y + (size * 2), x, y + (size * 3), x, y + (size * 4));
-            ctx.bezierCurveTo(x, y + (size * 3), x + size, y + (size * 2), x + size, y + size);
-            ctx.bezierCurveTo(x + size, y, x, y, x, y + size);
+            ctx.moveTo(heart.x + heartSize / 2, heart.y + heartSize / 4);
+            ctx.arc(heart.x + heartSize / 2, heart.y + heartSize / 2, heartSize / 2, 0, Math.PI * 2, true); // Changed angle to draw full circle
+            ctx.arc(heart.x + 4 * heartSize / 2, heart.y + heartSize / 2, heartSize / 2, 0, Math.PI * 2, true); // Changed angle to draw full circle
+            ctx.lineTo(heart.x + heartSize / 2, heart.y + heartSize);
+            ctx.closePath();
             ctx.fillStyle = '#ff1493';
             ctx.fill();
-            ctx.closePath();
         }
 
         function update() {
