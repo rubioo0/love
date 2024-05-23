@@ -186,8 +186,35 @@
             }
         }
 
+        function handleClick(event) {
+            if (!gameRunning) return;
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const mouseY = event.clientY - rect.top;
+
+            for (let i = 0; i < hearts.length; i++) {
+                const heart = hearts[i];
+                if (
+                    mouseX > heart.x && mouseX < heart.x + heartSize &&
+                    mouseY > heart.y && mouseY < heart.y + heartSize
+                ) {
+                    hearts.splice(i, 1);
+                    score++;
+                    collectSound.play().catch(error => console.error('Audio play error:', error));
+                    document.getElementById('score').innerText = `Score: ${score}`;
+                    if (score % 10 === 0) {
+                        level++;
+                        heartSpeed += 0.5;
+                        document.getElementById('level').innerText = `Level: ${level}`;
+                    }
+                    break;
+                }
+            }
+        }
+
         document.getElementById('startButton').onclick = startGame;
         window.addEventListener('keydown', moveCharacter);
+        canvas.addEventListener('click', handleClick);
     </script>
 </body>
 </html>
