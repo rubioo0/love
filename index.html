@@ -30,7 +30,7 @@
         #level {
             left: 300px;
         }
-        #startButton {
+        #startButton, #nextLevelButton {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -52,6 +52,9 @@
             color: #ff1493;
             display: none;
         }
+        #nextLevelButton {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -59,6 +62,7 @@
     <div id="lives">Lives: 3</div>
     <div id="level">Level: 1</div>
     <button id="startButton">привітик!</button>
+    <button id="nextLevelButton">Go to next level</button>
     <div id="gameOverMessage">ти молодчинка! ти молодчинка</div>
     <canvas id="gameCanvas"></canvas>
     <script>
@@ -134,9 +138,8 @@
                     collectSound.play().catch(error => console.error('Audio play error:', error));
                     document.getElementById('score').innerText = `Score: ${score}`;
                     if (score % 10 === 0) {
-                        level++;
-                        heartSpeed += 0.5;
-                        document.getElementById('level').innerText = `Level: ${level}`;
+                        document.getElementById('nextLevelButton').style.display = 'block';
+                        gameRunning = false; // Pause the game
                     }
                 } else if (hearts[i].y > canvas.height) {
                     hearts.splice(i, 1);
@@ -171,6 +174,16 @@
             document.getElementById('level').innerText = `Level: ${level}`;
             document.getElementById('gameOverMessage').style.display = 'none';
             document.getElementById('startButton').style.display = 'none';
+            document.getElementById('nextLevelButton').style.display = 'none';
+            update();
+        }
+
+        function nextLevel() {
+            level++;
+            heartSpeed += 0.5;
+            document.getElementById('level').innerText = `Level: ${level}`;
+            document.getElementById('nextLevelButton').style.display = 'none';
+            gameRunning = true;
             update();
         }
 
@@ -203,9 +216,8 @@
                     collectSound.play().catch(error => console.error('Audio play error:', error));
                     document.getElementById('score').innerText = `Score: ${score}`;
                     if (score % 10 === 0) {
-                        level++;
-                        heartSpeed += 0.5;
-                        document.getElementById('level').innerText = `Level: ${level}`;
+                        document.getElementById('nextLevelButton').style.display = 'block';
+                        gameRunning = false; // Pause the game
                     }
                     break;
                 }
@@ -213,6 +225,7 @@
         }
 
         document.getElementById('startButton').onclick = startGame;
+        document.getElementById('nextLevelButton').onclick = nextLevel;
         window.addEventListener('keydown', moveCharacter);
         canvas.addEventListener('click', handleClick);
     </script>
