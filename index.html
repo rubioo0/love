@@ -59,7 +59,7 @@
     <div id="lives">Lives: 3</div>
     <div id="level">Level: 1</div>
     <button id="startButton">привітик!</button>
-    <div id="gameOverMessage">ти молодчинка! заново </div>
+    <div id="gameOverMessage">ти молодчинка! ти молодчинка</div>
     <canvas id="gameCanvas"></canvas>
     <script>
         const canvas = document.getElementById('gameCanvas');
@@ -82,10 +82,10 @@
         };
 
         const hearts = [];
-        const heartSize = 15;
+        const heartSize = 30;
 
-        const collectSound = new Audio('https://www.myinstants.com/media/sounds/click.mp3'); // Changed to a public MP3 file
-        const gameOverSound = new Audio('https://www.myinstants.com/media/sounds/vine-boom.mp3'); // Changed to a public MP3 file
+        const collectSound = new Audio('https://www.myinstants.com/media/sounds/click.mp3');
+        const gameOverSound = new Audio('https://www.myinstants.com/media/sounds/vine-boom.mp3');
 
         function drawCharacter() {
             ctx.fillStyle = '#ff1493';
