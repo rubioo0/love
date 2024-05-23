@@ -30,7 +30,7 @@
         #level {
             left: 300px;
         }
-        #startButton, #nextLevelButton {
+        #startButton {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -42,7 +42,6 @@
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            display: none;
         }
         #gameOverMessage {
             position: absolute;
@@ -60,7 +59,6 @@
     <div id="lives">Lives: 3</div>
     <div id="level">Level: 1</div>
     <button id="startButton">привітик!</button>
-    <button id="nextLevelButton">Go to Level 2</button>
     <div id="gameOverMessage">ти молодчинка! ти молодчинка</div>
     <canvas id="gameCanvas"></canvas>
     <script>
@@ -135,8 +133,10 @@
                     score++;
                     collectSound.play().catch(error => console.error('Audio play error:', error));
                     document.getElementById('score').innerText = `Score: ${score}`;
-                    if (score === 20 || score === 40) {
-                        levelAdvance();
+                    if (score % 10 === 0) {
+                        level++;
+                        heartSpeed += 0.5;
+                        document.getElementById('level').innerText = `Level: ${level}`;
                     }
                 } else if (hearts[i].y > canvas.height) {
                     hearts.splice(i, 1);
@@ -149,22 +149,6 @@
             }
 
             requestAnimationFrame(update);
-        }
-
-        function levelAdvance() {
-            gameRunning = false;
-            document.getElementById('nextLevelButton').innerText = score === 20 ? 'Go to Level 2' : 'Go to Level 3';
-            document.getElementById('nextLevelButton').style.display = 'block';
-        }
-
-        function startNextLevel() {
-            gameRunning = true;
-            hearts.length = 0;
-            level++;
-            heartSpeed += 0.5;
-            document.getElementById('level').innerText = `Level: ${level}`;
-            document.getElementById('nextLevelButton').style.display = 'none';
-            update();
         }
 
         function gameOver() {
@@ -187,7 +171,6 @@
             document.getElementById('level').innerText = `Level: ${level}`;
             document.getElementById('gameOverMessage').style.display = 'none';
             document.getElementById('startButton').style.display = 'none';
-            document.getElementById('nextLevelButton').style.display = 'none';
             update();
         }
 
@@ -219,8 +202,10 @@
                     score++;
                     collectSound.play().catch(error => console.error('Audio play error:', error));
                     document.getElementById('score').innerText = `Score: ${score}`;
-                    if (score === 20 || score === 40) {
-                        levelAdvance();
+                    if (score % 10 === 0) {
+                        level++;
+                        heartSpeed += 0.5;
+                        document.getElementById('level').innerText = `Level: ${level}`;
                     }
                     break;
                 }
@@ -228,7 +213,6 @@
         }
 
         document.getElementById('startButton').onclick = startGame;
-        document.getElementById('nextLevelButton').onclick = startNextLevel;
         window.addEventListener('keydown', moveCharacter);
         canvas.addEventListener('click', handleClick);
     </script>
