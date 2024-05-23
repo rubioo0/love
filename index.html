@@ -44,7 +44,7 @@
             cursor: pointer;
             display: none;
         }
-        #gameOverMessage, #nextLevelMessage {
+        #gameOverMessage {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -60,9 +60,8 @@
     <div id="lives">Lives: 3</div>
     <div id="level">Level: 1</div>
     <button id="startButton">привітик!</button>
-    <div id="gameOverMessage">ти молодчинка! ти молодчинка</div>
-    <div id="nextLevelMessage">You reached 20 points! Go to Level 2</div>
     <button id="nextLevelButton">Go to Level 2</button>
+    <div id="gameOverMessage">ти молодчинка! ти молодчинка</div>
     <canvas id="gameCanvas"></canvas>
     <script>
         const canvas = document.getElementById('gameCanvas');
@@ -86,7 +85,6 @@
 
         const hearts = [];
         const heartSize = 30;
-        const hitMargin = 10;  // Extra margin for easier clicking
 
         const collectSound = new Audio('https://www.myinstants.com/media/sounds/click.mp3');
         const gameOverSound = new Audio('https://www.myinstants.com/media/sounds/vine-boom.mp3');
@@ -137,12 +135,9 @@
                     score++;
                     collectSound.play().catch(error => console.error('Audio play error:', error));
                     document.getElementById('score').innerText = `Score: ${score}`;
-                    if (score % 10 === 0) {
-                        level++;
-                        heartSpeed += 0.5;
-                        document.getElementById('level').innerText = `Level: ${level}`;
+                    if (score === 20 || score === 40) {
+                        levelAdvance();
                     }
-                    checkForLevelAdvance();
                 } else if (hearts[i].y > canvas.height) {
                     hearts.splice(i, 1);
                     lives--;
@@ -156,23 +151,18 @@
             requestAnimationFrame(update);
         }
 
-        function checkForLevelAdvance() {
-            if (score === 20 || score === 40) {
-                gameRunning = false;
-                document.getElementById('nextLevelMessage').innerText = score === 20 ? 'You reached 20 points! Go to Level 2' : 'You reached 40 points! Go to Level 3';
-                document.getElementById('nextLevelMessage').style.display = 'block';
-                document.getElementById('nextLevelButton').style.display = 'block';
-                document.getElementById('nextLevelButton').innerText = score === 20 ? 'Go to Level 2' : 'Go to Level 3';
-                document.getElementById('nextLevelButton').onclick = startNextLevel;
-            }
+        function levelAdvance() {
+            gameRunning = false;
+            document.getElementById('nextLevelButton').innerText = score === 20 ? 'Go to Level 2' : 'Go to Level 3';
+            document.getElementById('nextLevelButton').style.display = 'block';
         }
 
         function startNextLevel() {
             gameRunning = true;
-            level++;
-            heartSpeed += 1;
             hearts.length = 0;
-            document.getElementById('nextLevelMessage').style.display = 'none';
+            level++;
+            heartSpeed += 0.5;
+            document.getElementById('level').innerText = `Level: ${level}`;
             document.getElementById('nextLevelButton').style.display = 'none';
             update();
         }
@@ -197,6 +187,7 @@
             document.getElementById('level').innerText = `Level: ${level}`;
             document.getElementById('gameOverMessage').style.display = 'none';
             document.getElementById('startButton').style.display = 'none';
+            document.getElementById('nextLevelButton').style.display = 'none';
             update();
         }
 
@@ -221,25 +212,23 @@
             for (let i = 0; i < hearts.length; i++) {
                 const heart = hearts[i];
                 if (
-                    mouseX > heart.x - hitMargin && mouseX < heart.x + heartSize + hitMargin &&
-                    mouseY > heart.y - hitMargin && mouseY < heart.y + heartSize + hitMargin
+                    mouseX > heart.x && mouseX < heart.x + heartSize &&
+                    mouseY > heart.y && mouseY < heart.y + heartSize
                 ) {
                     hearts.splice(i, 1);
                     score++;
                     collectSound.play().catch(error => console.error('Audio play error:', error));
                     document.getElementById('score').innerText = `Score: ${score}`;
-                    if (score % 10 === 0) {
-                        level++;
-                        heartSpeed += 0.5;
-                        document.getElementById('level').innerText = `Level: ${level}`;
+                    if (score === 20 || score === 40) {
+                        levelAdvance();
                     }
-                    checkForLevelAdvance();
                     break;
                 }
             }
         }
 
         document.getElementById('startButton').onclick = startGame;
+        document.getElementById('nextLevelButton').onclick = startNextLevel;
         window.addEventListener('keydown', moveCharacter);
         canvas.addEventListener('click', handleClick);
     </script>
