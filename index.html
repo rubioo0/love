@@ -56,7 +56,7 @@
         function drawHeart(heart) {
             ctx.beginPath();
             ctx.moveTo(heart.x + heartSize / 2, heart.y + heartSize / 4);
-            ctx.arc(heart.x + heartSize / 4, heart.y + heartSize / 4, heartSize / 4, 0, Math.PI * 2, true); // Changed angle to draw full circle
+            ctx.arc(heart.x + heartSize / 6, heart.y + heartSize / 4, heartSize / 4, 0, Math.PI * 2, true); // Changed angle to draw full circle
             ctx.arc(heart.x + 3 * heartSize / 4, heart.y + heartSize / 4, heartSize / 4, 0, Math.PI * 2, true); // Changed angle to draw full circle
             ctx.lineTo(heart.x + heartSize / 2, heart.y + heartSize);
             ctx.closePath();
