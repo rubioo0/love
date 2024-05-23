@@ -87,6 +87,7 @@
 
         const hearts = [];
         const heartSize = 30;
+        const heartClickableSize = 50;  // Increase clickable area
 
         const collectSound = new Audio('https://www.myinstants.com/media/sounds/click.mp3');
         const gameOverSound = new Audio('https://www.myinstants.com/media/sounds/vine-boom.mp3');
@@ -208,8 +209,8 @@
             for (let i = 0; i < hearts.length; i++) {
                 const heart = hearts[i];
                 if (
-                    mouseX > heart.x && mouseX < heart.x + heartSize &&
-                    mouseY > heart.y && mouseY < heart.y + heartSize
+                    mouseX > heart.x - (heartClickableSize - heartSize) / 2 && mouseX < heart.x + heartSize + (heartClickableSize - heartSize) / 2 &&
+                    mouseY > heart.y - (heartClickableSize - heartSize) / 2 && mouseY < heart.y + heartSize + (heartClickableSize - heartSize) / 2
                 ) {
                     hearts.splice(i, 1);
                     score++;
