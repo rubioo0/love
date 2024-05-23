@@ -131,11 +131,7 @@
                 ) {
                     hearts.splice(i, 1);
                     score++;
-                    if (collectSound.readyState >= 2) { // Check if audio is ready to play
-                        collectSound.play().catch(error => {
-                            console.error('Audio play error:', error);
-                        });
-                    }
+                    collectSound.play().catch(error => console.error('Audio play error:', error));
                     document.getElementById('score').innerText = `Score: ${score}`;
                     if (score % 10 === 0) {
                         level++;
@@ -157,11 +153,7 @@
 
         function gameOver() {
             gameRunning = false;
-            if (gameOverSound.readyState >= 2) { // Check if audio is ready to play
-                gameOverSound.play().catch(error => {
-                    console.error('Audio play error:', error);
-                });
-            }
+            gameOverSound.play().catch(error => console.error('Audio play error:', error));
             document.getElementById('gameOverMessage').style.display = 'block';
             document.getElementById('gameOverMessage').onclick = startGame;
         }
@@ -194,12 +186,13 @@
             }
         }
 
-        document.getElementById('startButton').onclick = startGame;
-        window.addEventListener('keydown', moveCharacter);
+        document.getElementById('startButton').onclick = () => {
+            collectSound.play().catch(error => console.error('Audio play error:', error));
+            gameOverSound.play().catch(error => console.error('Audio play error:', error));
+            startGame();
+        };
 
-        // Preload audio
-        collectSound.load();
-        gameOverSound.load();
+        window.addEventListener('keydown', moveCharacter);
     </script>
 </body>
 </html>
